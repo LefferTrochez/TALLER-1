@@ -45,7 +45,7 @@ def boton_decision(pantalla, posicion_x_boton, texto, function = None): # FUNCI�
     return parametro_boton, forma_boton # RETORNOS DE LA FUNCIÓN
 
 primero = True
-def callback(msg): # FUNCIÓN PARA GRAFICAR EN TIEMPO REAL
+def callback(msg): # FUNCIÓN PARA GRAFICAR EN TIEMPO REALuuuuuuu
     if primero:
         preguntar = pygame.font.SysFont("Arial", 30) 
         texto_preguntar = preguntar.render("¿Quieres guardar el recorrido del TurtleBot?", True, (0, 0, 0)) 
@@ -62,7 +62,7 @@ def callback(msg): # FUNCIÓN PARA GRAFICAR EN TIEMPO REAL
             evento(i, Boton_no, funcion_asiganada = lambda:NoQuiero()) 
     else:
         if escribir:
-            pygame.display.update() # ACTUALIZAR
+            pygame.display.update() # ACTUALIZARrr
             x = (msg.linear.x)*100 # COORDENADA DEL ROBOT EN X ESCALA POR 100
             y = (msg.linear.y)*100 # COORDENADA DEL ROBOT EN Y ESCALA POR 100
             pygame.draw.circle(pantalla, robot, (x+pantalla.get_width()/2, -y+pantalla.get_height()/2), 4) # DIBUJA EL CIRCULO EN LA PANTALLA EN LA COORDENADA DADA
