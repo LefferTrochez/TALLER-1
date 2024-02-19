@@ -4,6 +4,7 @@ import pygame # BIBLIOTECA PARA APLICACIONES MULTIMEDIA
 from geometry_msgs.msg import Twist # ES EL TIPO DE MENSAJE 
 from tkinter import filedialog # PARA LA SELECCIÓN DE ARCHIVOS Y DIRECTORIOS
 import os # INTERFACE PARA INTERACTUAR CON EL SISTEMA OPERATIVO SUBYACENTE
+import time
 
 pygame.init() # INICILIZACIÓN DEL CÓDIGO
 pantalla = pygame.display.set_mode((600, 650)) # CREACIÓN DE LA PANTALLA Y TAMAÑO DE LA MISMA
@@ -11,6 +12,8 @@ robot = (0, 0, 0) # COLOR DEL ROBOT - NEGRO - (R G B)
 pantalla.fill((255, 255, 255)) # COLOR DEL FONDO - BLANCO - (R G B)
 global vel_lineal
 global vel_angular
+global lista_lineal
+global lista_angular
 
 def evento(i, forma_boton, funcion_asiganada = None): # FUNCIÓN PARA DETECTAR EL MOUSE
     if i.type == pygame.MOUSEBUTTONDOWN and i.button == 1: # DETECCIÓN DEL MOUSE
@@ -145,16 +148,30 @@ def GuardarRecorrido(): # FUNCIÓN PARA GUARDAR LA IMAGEN DEL RECORRIDO
                 ConNombre.write(SinNombre.read()) # ESCRIBIR EN EL ARCHIVO EL CONTENIDO DE LA IMAGEN "SINNOMBRE"
                 ConNombre.close()
 
-def RecorridoTxt ():
-         Cliente = rclpy.create_client(Twist, "recorrido_automatico")
-         while not Cliente.wait_for_service(1.0):
-             print("Esperando...")
-
+lista_lineal = []
+lista_angular = []
+def RecorridoTxt (msg):
+         #Servidor = rclpy.create_service(Twist, "recorrido_automatico")
+        # while not Servidor.wait_for_service(1.0):
+    if msg.linear.x != float(123) or msg.angular.z != float(123):
+        lista_lineal.append(msg.linear.x)
+        lista_angular.append(msg.angular.z)
+    else:
+        lista_lineal.append(float(123))
+        lista_angular.append(float(123))
+        ulitmo_valor = len(lista_angular)
+        if float(lista_angular[ulitmo_valor-1]) == float(123):
+            for i in range(1, len(lista_angular)):
+                print("lineal " + str(lista_lineal[i]))
+                print("angular " + str(lista_angular[i]))
+                time.sleep(2)
+    
 def main(args=None): # FUNCIÓN PRINCIAL
     rclpy.init(args=args) # PARA INICIALIZAR EL CÓDIGO EN PYTHON
     TurtleBotInterfaceNode = rclpy.create_node('turtle_bot_interface') # CREACIÓN DEL NODO
     subscriber_position = TurtleBotInterfaceNode.create_subscription(Twist, '/turtlebot_position', callback, 10) # CREACIÓN DEL SUSCRIBER
     subscriber_velocidad = TurtleBotInterfaceNode.create_subscription(Twist, '/turtlebot_cmdVel', callback, 10) # CREACIÓN DEL SUSCRIBER
+    subscriber_recorrido = TurtleBotInterfaceNode.create_subscription(Twist, '/turtlebot_cmdVel', RecorridoTxt, 10) # CREACIÓN DEL SUSCRIBER
     rclpy.spin(TurtleBotInterfaceNode) # PARA NO DEJAR MORIR LA COMUNICACIÓN
     rclpy.shutdown() # PARA APAGAR LA COMUNICACIÓN
 
