@@ -12,7 +12,7 @@ TurtleBotTeleopNode.get_logger().info('\n' '\n' "Now, to move the robot you have
 msg = Twist() # TIPO DE MENSAJE 
 global linear_out , angular_out # ATRIBUTO DE LAS VARIABLES AUXILIARES
 linear_out = 0.0 # VARIABLE AUXILIAR PARA LA VELOCIDAD LINEAL
-angular_out = 0.0 # VARIABLE AUXILIAR PARA LA VELOCIDAD ANGULAR
+angular_out = 0.0 # VARIABLE AUXILIAR PARA LA VELOCIDAD ANGULARwdsd
 
 def PressCase(key): # FUNCIÓN PARA CUANDO SE PRESIONA UNA TECLA
     global linear_out , angular_out # ATRIBUTO DE LAS VARIABLES AUXILIARES

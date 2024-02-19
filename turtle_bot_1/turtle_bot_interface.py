@@ -42,7 +42,7 @@ def boton_decision(pantalla, posicion_x_boton, texto, function = None): # FUNCI�
     parametro_boton.blit(texto_boton, ((1/2)*(ancho_boton - texto_boton.get_width()), (1/2)*(alto_boton - texto_boton.get_height()))) # PONER TEXTO EN LA SUPERFICIE DEL BOTÓN CENTRADO
     pantalla.blit(parametro_boton, (posicion_x_boton, posicion_y_boton)) # CONSTRUIR EL BOTÓN EN LA PANTALLA
     forma_boton = pygame.Rect(posicion_x_boton, posicion_y_boton, ancho_boton, alto_boton) # FORMA RECTÁNGULAR DEL BOTÓN INSERTADO EN LA PANTALLA
-    return parametro_boton, forma_boton,x_pos # RETORNOS DE LA FUNCIÓN
+    return parametro_boton, forma_boton # RETORNOS DE LA FUNCIÓN
 
 primero = True
 def callback(msg): # FUNCIÓN PARA GRAFICAR EN TIEMPO REAL
