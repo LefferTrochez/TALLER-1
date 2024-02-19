@@ -34,7 +34,7 @@ def boton(pantalla, posicion_y_boton, texto, function = None): # FUNCIÓN PARA C
 def boton_decision(pantalla, posicion_x_boton, texto, function = None): # FUNCIÓN PARA CREAR EL BOTÓN
     posicion_y_boton = 325 # POSICIÓN Y DEL BOTON DENTRO DE LA PANTALLA
     ancho_boton = 110 # DIMENSIÓN ANCHO DEL BOTÓN
-    alto_boton = 30 # DIMENSIÓN ALTO DEL BOTÓN
+    alto_boton = 30 # DIMENSIÓN ALTO DEL BOTÓNs
     parametro_boton = pygame.Surface((ancho_boton, alto_boton)) # DEFINE EL ANCHO Y ALTO DEL BOTÓN
     parametro_boton.fill((0, 0, 0)) # DEFINE EL COLOR DEL BOTÓN - NEGRO - (R G B)
     fuente_boton = pygame.font.SysFont("Aharoni", 24) # TIPO DE FUENTE DEL BOTÓN Y TAMAÑO DE LA LETRA
@@ -42,7 +42,7 @@ def boton_decision(pantalla, posicion_x_boton, texto, function = None): # FUNCI�
     parametro_boton.blit(texto_boton, ((1/2)*(ancho_boton - texto_boton.get_width()), (1/2)*(alto_boton - texto_boton.get_height()))) # PONER TEXTO EN LA SUPERFICIE DEL BOTÓN CENTRADO
     pantalla.blit(parametro_boton, (posicion_x_boton, posicion_y_boton)) # CONSTRUIR EL BOTÓN EN LA PANTALLA
     forma_boton = pygame.Rect(posicion_x_boton, posicion_y_boton, ancho_boton, alto_boton) # FORMA RECTÁNGULAR DEL BOTÓN INSERTADO EN LA PANTALLA
-    return parametro_boton, forma_boton # RETORNOS DE LA FUNCIÓ
+    return parametro_boton, forma_boton,x_pos # RETORNOS DE LA FUNCIÓN
 
 primero = True
 def callback(msg): # FUNCIÓN PARA GRAFICAR EN TIEMPO REAL
