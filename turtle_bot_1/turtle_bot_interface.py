@@ -14,6 +14,8 @@ global vel_lineal
 global vel_angular
 global lista_lineal
 global lista_angular
+global pos_x
+global pos_y
 
 def evento(i, forma_boton, funcion_asiganada = None): # FUNCIÓN PARA DETECTAR EL MOUSE
     if i.type == pygame.MOUSEBUTTONDOWN and i.button == 1: # DETECCIÓN DEL MOUSE
@@ -65,7 +67,7 @@ def callback(msg): # FUNCIÓN PARA GRAFICAR EN TIEMPO REALuuuuuuu
             evento(i, Boton_no, funcion_asiganada = lambda:NoQuiero()) 
     else:
         if escribir:
-            pygame.display.update() # ACTUALIZARrr
+            pygame.display.update() # ACTUALIZAR
             x = (msg.linear.x)*100 # COORDENADA DEL ROBOT EN X ESCALA POR 100
             y = (msg.linear.y)*100 # COORDENADA DEL ROBOT EN Y ESCALA POR 100
             pygame.draw.circle(pantalla, robot, (x+pantalla.get_width()/2, -y+pantalla.get_height()/2), 4) # DIBUJA EL CIRCULO EN LA PANTALLA EN LA COORDENADA DADA
@@ -148,30 +150,30 @@ def GuardarRecorrido(): # FUNCIÓN PARA GUARDAR LA IMAGEN DEL RECORRIDO
                 ConNombre.write(SinNombre.read()) # ESCRIBIR EN EL ARCHIVO EL CONTENIDO DE LA IMAGEN "SINNOMBRE"
                 ConNombre.close()
 
-lista_lineal = []
-lista_angular = []
+global aqui
+aqui = True
 def RecorridoTxt (msg):
-         #Servidor = rclpy.create_service(Twist, "recorrido_automatico")
-        # while not Servidor.wait_for_service(1.0):
-    if msg.linear.x != float(123) or msg.angular.z != float(123):
-        lista_lineal.append(msg.linear.x)
-        lista_angular.append(msg.angular.z)
-    else:
-        lista_lineal.append(float(123))
-        lista_angular.append(float(123))
-        ulitmo_valor = len(lista_angular)
-        if float(lista_angular[ulitmo_valor-1]) == float(123):
-            for i in range(1, len(lista_angular)):
-                print("lineal " + str(lista_lineal[i]))
-                print("angular " + str(lista_angular[i]))
-                time.sleep(2)
-    
+                global aqui
+                pantalla.fill((255, 255, 255))
+                if aqui:
+                    pygame.display.update() #
+                    pos_x = 0
+                    pos_y = 0
+                    if len(str(msg.linear.x)) > 5:
+                        pos_x = (msg.linear.x)*10
+                    if len(str(msg.linear.y)) > 5:
+                        pos_y = (msg.linear.y)*10
+                    print(pos_x)
+                    print(pos_y)
+                    pygame.draw.circle(pantalla, robot, (pos_x+pantalla.get_width()/2, -pos_y+pantalla.get_height()/2), 4) # DIBUJA EL CIRCULO EN LA PANTALLA EN LA COORDENADA DADA
+
 def main(args=None): # FUNCIÓN PRINCIAL
     rclpy.init(args=args) # PARA INICIALIZAR EL CÓDIGO EN PYTHON
     TurtleBotInterfaceNode = rclpy.create_node('turtle_bot_interface') # CREACIÓN DEL NODO
     subscriber_position = TurtleBotInterfaceNode.create_subscription(Twist, '/turtlebot_position', callback, 10) # CREACIÓN DEL SUSCRIBER
     subscriber_velocidad = TurtleBotInterfaceNode.create_subscription(Twist, '/turtlebot_cmdVel', callback, 10) # CREACIÓN DEL SUSCRIBER
-    subscriber_recorrido = TurtleBotInterfaceNode.create_subscription(Twist, '/turtlebot_cmdVel', RecorridoTxt, 10) # CREACIÓN DEL SUSCRIBER
+   # subscriber_recorrido_vel = TurtleBotInterfaceNode.create_subscription(Twist, '/turtlebot_cmdVel', RecorridoTxt, 10) # CREACIÓN DEL SUSCRIBER
+    subscriber_recorrido_pos = TurtleBotInterfaceNode.create_subscription(Twist, '/turtlebot_position', RecorridoTxt, 10) # CREACIÓN DEL SUSCRIBER
     rclpy.spin(TurtleBotInterfaceNode) # PARA NO DEJAR MORIR LA COMUNICACIÓN
     rclpy.shutdown() # PARA APAGAR LA COMUNICACIÓN
 
