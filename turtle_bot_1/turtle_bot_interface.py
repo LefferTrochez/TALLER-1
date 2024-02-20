@@ -160,9 +160,9 @@ def RecorridoTxt (msg):
                     pos_x = 0
                     pos_y = 0
                     if len(str(msg.linear.x)) > 5:
-                        pos_x = (msg.linear.x)*10
+                        pos_x = (msg.linear.x)*100
                     if len(str(msg.linear.y)) > 5:
-                        pos_y = (msg.linear.y)*10
+                        pos_y = (msg.linear.y)*100
                     print(pos_x)
                     print(pos_y)
                     pygame.draw.circle(pantalla, robot, (pos_x+pantalla.get_width()/2, -pos_y+pantalla.get_height()/2), 4) # DIBUJA EL CIRCULO EN LA PANTALLA EN LA COORDENADA DADA
