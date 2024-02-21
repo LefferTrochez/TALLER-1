@@ -4,6 +4,7 @@ from rclpy.node import Node
 from geometry_msgs.msg import Twist # ES EL TIPO DE MENSAJE 
 import os
 import time
+from example_interfaces.srv import SetBool
 
 class TurtleBotPlayerNode(Node):
 	def __init__(self):
@@ -13,6 +14,19 @@ class TurtleBotPlayerNode(Node):
 	
 	def recorrido(self):
 		msg = Twist()
+		request = SetBool.Request()
+		response = SetBool.Response()
+		Cliente = self.create_client(SetBool, 'recorrido_guardado')
+		request.data = True
+		response
+		print("request : " + str(request.data))
+		future = Cliente.call_async(request)
+		response = future.result()
+		print("response : " + str(response))
+
+		
+
+
 		archivo_ruta = os.path.join(os.path.expanduser("~"), "recorrido.txt")
 		try:
 			with open(archivo_ruta, 'r') as archivo:
@@ -20,9 +34,9 @@ class TurtleBotPlayerNode(Node):
 			for i in datos[0:]:
 				i = i.split(",")
 				msg.linear.x = float(i[0])
-				self.get_logger().info("lin: " + str(msg.linear.x))
+				#self.get_logger().info("lin: " + str(msg.linear.x))
 				msg.angular.z = float(i[1])
-				self.get_logger().info("vel: " + str(msg.angular.z))
+				#self.get_logger().info("vel: " + str(msg.angular.z))
 				self.publisher_.publish(msg)
 			msg.linear.x = float(123)
 			msg.angular.z = float(123)
@@ -31,6 +45,17 @@ class TurtleBotPlayerNode(Node):
 
 		except FileNotFoundError:
 			print(f"El archivo {archivo_ruta} no fue encontrado.")
+
+
+	#	response = future.result()
+		#print("cliente creado")
+	#	print(response)
+		#return response
+
+
+
+
+
 
 def main(args=None):
 	rclpy.init(args=args)

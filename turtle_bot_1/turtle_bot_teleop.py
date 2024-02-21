@@ -28,7 +28,7 @@ def PressCase(key): # FUNCIÓN PARA CUANDO SE PRESIONA UNA TECLA
         print('Key no valid!')
     msg.linear.x = linear_out # OBTENER VELOCIDAD LINEAL
     msg.angular.z = angular_out # OBTENER VELOCIDAD ANGULAR
-    Publish.publish(msg) # PUBLICAR VELOCIDADES***********************hjhj
+    Publish.publish(msg) # PUBLICAR VELOCIDADES
 
 def ReleaseCase(key):
     global linear_out , angular_out # ATRIBUTO DE LAS VARIABLES AUXILIARES

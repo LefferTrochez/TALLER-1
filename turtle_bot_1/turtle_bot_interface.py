@@ -5,6 +5,7 @@ from geometry_msgs.msg import Twist # ES EL TIPO DE MENSAJE
 from tkinter import filedialog # PARA LA SELECCIÓN DE ARCHIVOS Y DIRECTORIOS
 import os # INTERFACE PARA INTERACTUAR CON EL SISTEMA OPERATIVO SUBYACENTE
 import time
+from example_interfaces.srv import SetBool
 
 pygame.init() # INICILIZACIÓN DEL CÓDIGO
 pantalla = pygame.display.set_mode((600, 650)) # CREACIÓN DE LA PANTALLA Y TAMAÑO DE LA MISMA
@@ -150,29 +151,46 @@ def GuardarRecorrido(): # FUNCIÓN PARA GUARDAR LA IMAGEN DEL RECORRIDO
                 ConNombre.write(SinNombre.read()) # ESCRIBIR EN EL ARCHIVO EL CONTENIDO DE LA IMAGEN "SINNOMBRE"
                 ConNombre.close()
 
+def servicio_player(request, response):
+    if request.data:
+        response.success = True
+        response.message = "ya te lo mando"
+        print("response: " + str(response))
+        print("request: " + str(request))
+    else:
+        response.success = False
+        response.message = "no"
+    return response
+
 global aqui
 aqui = True
 def RecorridoTxt (msg):
-                global aqui
-                pantalla.fill((255, 255, 255))
-                if aqui:
-                    pygame.display.update() #
-                    pos_x = 0
-                    pos_y = 0
-                    if len(str(msg.linear.x)) > 5:
-                        pos_x = (msg.linear.x)*100
-                    if len(str(msg.linear.y)) > 5:
-                        pos_y = (msg.linear.y)*100
-                    print(pos_x)
-                    print(pos_y)
-                    pygame.draw.circle(pantalla, robot, (pos_x+pantalla.get_width()/2, -pos_y+pantalla.get_height()/2), 4) # DIBUJA EL CIRCULO EN LA PANTALLA EN LA COORDENADA DADA
+    
+    global aqui
+    pantalla.fill((255, 255, 255))
+    if aqui:
+        pygame.display.update() #
+        pos_x = 0
+        pos_y = 0
+        if len(str(msg.linear.x)) > 5:
+            pos_x = (msg.linear.x)*100
+        if len(str(msg.linear.y)) > 5:
+            pos_y = (msg.linear.y)*100
+        #print(pos_x)
+        #print(pos_y)
+        pygame.draw.circle(pantalla, robot, (pos_x+pantalla.get_width()/2, -pos_y+pantalla.get_height()/2), 4) # DIBUJA EL CIRCULO EN LA PANTALLA EN LA COORDENADA DADA
+
 
 def main(args=None): # FUNCIÓN PRINCIAL
     rclpy.init(args=args) # PARA INICIALIZAR EL CÓDIGO EN PYTHON
     TurtleBotInterfaceNode = rclpy.create_node('turtle_bot_interface') # CREACIÓN DEL NODO
+    Servicio = TurtleBotInterfaceNode.create_service(SetBool, 'recorrido_guardado', servicio_player)
+    print("el servicio ha sido creado")
+
+
+
     subscriber_position = TurtleBotInterfaceNode.create_subscription(Twist, '/turtlebot_position', callback, 10) # CREACIÓN DEL SUSCRIBER
     subscriber_velocidad = TurtleBotInterfaceNode.create_subscription(Twist, '/turtlebot_cmdVel', callback, 10) # CREACIÓN DEL SUSCRIBER
-   # subscriber_recorrido_vel = TurtleBotInterfaceNode.create_subscription(Twist, '/turtlebot_cmdVel', RecorridoTxt, 10) # CREACIÓN DEL SUSCRIBER
     subscriber_recorrido_pos = TurtleBotInterfaceNode.create_subscription(Twist, '/turtlebot_position', RecorridoTxt, 10) # CREACIÓN DEL SUSCRIBER
     rclpy.spin(TurtleBotInterfaceNode) # PARA NO DEJAR MORIR LA COMUNICACIÓN
     rclpy.shutdown() # PARA APAGAR LA COMUNICACIÓN
