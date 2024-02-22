@@ -23,7 +23,6 @@ class TurtleBotPlayerNode(Node):
 		future = self.cliente.call_async(request)
 		future.add_done_callback(self.funcion)
 		
-
 	def funcion(self, future):
 		try:
 			response = future.result()

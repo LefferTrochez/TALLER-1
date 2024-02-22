@@ -8,6 +8,12 @@
   <license>TODO: License declaration</license>
 
   <depend>rclpy</depend>
+  <depend>geometry_msgs</depend>
+  <depend>my_msgs</depend>
+  <depend>pynput</depend>
+  <depend>pygame</depend>
+  <depend>time</depend>
+  <depend>os</depend>
 
   <test_depend>ament_copyright</test_depend>
   <test_depend>ament_flake8</test_depend>
