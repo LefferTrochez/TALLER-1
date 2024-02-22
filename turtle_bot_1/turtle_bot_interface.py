@@ -25,6 +25,7 @@ global cuatro
 global demas
 global resp_demas
 global otro
+global velocidad_lineal, velocidad_angular
 
 def evento(i, forma_boton, funcion_asiganada = None): # FUNCIÓN PARA DETECTAR EL MOUSE
     if i.type == pygame.MOUSEBUTTONDOWN and i.button == 1: # DETECCIÓN DEL MOUSE
@@ -60,12 +61,7 @@ def boton_decision(pantalla, posicion_x_boton, texto, function = None): # FUNCI�
 
 primero = True
 def callback(msg): # FUNCIÓN PARA GRAFICAR EN TIEMPO REALuuuuuuu
-
-
-        print("entro a callback")
-
         if primero:
-            print("entro primero")
             preguntar = pygame.font.SysFont("Arial", 30) 
             texto_preguntar = preguntar.render("¿Quieres guardar el recorrido del TurtleBot?", True, (0, 0, 0)) 
             posicion_x_preguntar = 12 # POSICIÓN X DEL TÍTULO DENTRO DE LA PANTALLA
@@ -83,41 +79,49 @@ def callback(msg): # FUNCIÓN PARA GRAFICAR EN TIEMPO REALuuuuuuu
 
         else:
                 if escribir: 
-                    print("entre a no escribir")
+                    global velocidad_angular, velocidad_lineal
                     pygame.display.update() # ACTUALI
                     x = (msg.linear.x)*100
                     y = (msg.linear.y)*100
-                    if len(str(x)) > 6 :
-                        x = x
-                    if len(str(y)) > 6:
-                        y = y
-                   # print("este es x: " + str(x))
-                   # print("este es y: " + str(y))
-                    pygame.draw.circle(pantalla, robot, (x+pantalla.get_width()/2, -y+pantalla.get_height()/2), 4) # DIBUJA EL CIRCULO EN LA PANTALLA EN LA COORDENADA DADA
-                    titulo = pygame.font.SysFont("Arial", 26) # TIPO DE FUENTE DEL TÍTULO Y TAMAÑO DE LA LETRA
-                    texto_titulo = titulo.render("Gráfica de Posición TurtleBot", True, (0, 0, 0)) # TÍTULO DE LA  GRÁFICA
-                    posicion_x_titulo = 20 # POSICIÓN X DEL TÍTULO DENTRO DE LA PANTALLA
-                    posicion_y_titulo = 25 # POSICIÓN Y DEL TÍTULO DENTRO DE LA PANTALLA
-                    pantalla.blit(texto_titulo, (posicion_x_titulo, posicion_y_titulo)) # PONER EL TEXTO DEL TÍTULO EN LA PANTALLA
-                    velocidad_lineal = (msg.linear.x)
-                    velocidad_angular = (msg.angular.z)
-                  #  print("angular : " + str(velocidad_angular))
                     vel_lineal = 0
                     vel_angular = 0
+                    velocidad_lineal = (msg.linear.x)
+                    velocidad_angular = (msg.angular.z)
+
                     if len(str(velocidad_lineal)) < 7:
                         vel_lineal = velocidad_lineal
                     if len(str(velocidad_angular)) < 7:
                         vel_angular = velocidad_angular
+                    print("veloc lineal: " + str(vel_lineal))
+                    print("veloc angular: " + str(vel_angular))
                     EscribirArchivoTexto(vel_lineal, vel_angular, "SinNombre.txt")
-                    pygame.display.update()  # ACTUALIZAR
-                    posicion_y_boton_imagen = 10 # POSICIÓN Y DEL BOTON DENTRO DE LA PANTALLA
-                    parametro_boton, Boton_guardar_imagen = boton(pantalla, posicion_y_boton_imagen, "Guardar imagenn") # CREAR EL BOTÓN "GUARDAR"
-                    posicion_y_boton_recorrido = 45 # POSICIÓN Y DEL BOTON DENTRO DE LA PANTALLA
-                    parametro_boton, Boton_guardar_recorrido = boton(pantalla, posicion_y_boton_recorrido, "Guardar recorrido") # CREAR EL BOTÓN "GUARDAR"
-                    for i in pygame.event.get(): # ENTRAR A LA FUNCIÓN EVENTO
-                        evento(i, Boton_guardar_imagen, funcion_asiganada = lambda:GuardarImagen()) # SI SE OPRIME EL BOTÓN "GUARDAR" CORRER LA FUNCIÓN "GUARDAR ARCHIVO"
-                        evento(i, Boton_guardar_recorrido, funcion_asiganada = lambda:GuardarRecorrido()) 
-                        pygame.display.update() # ACTUALIZAR
+                    
+                    if len(str(x)) > 6 and len(str(y)) > 6:
+
+                    # print("este es x: " + str(x))
+                    # print("este es y: " + str(y))
+                        pygame.draw.circle(pantalla, robot, (x+pantalla.get_width()/2, -y+pantalla.get_height()/2), 4) # DIBUJA EL CIRCULO EN LA PANTALLA EN LA COORDENADA DADA
+                        titulo = pygame.font.SysFont("Arial", 26) # TIPO DE FUENTE DEL TÍTULO Y TAMAÑO DE LA LETRA
+                        texto_titulo = titulo.render("Gráfica de Posición TurtleBot", True, (0, 0, 0)) # TÍTULO DE LA  GRÁFICA
+                        posicion_x_titulo = 20 # POSICIÓN X DEL TÍTULO DENTRO DE LA PANTALLA
+                        posicion_y_titulo = 25 # POSICIÓN Y DEL TÍTULO DENTRO DE LA PANTALLA
+                        pantalla.blit(texto_titulo, (posicion_x_titulo, posicion_y_titulo)) # PONER EL TEXTO DEL TÍTULO EN LA PANTALLA
+                        velocidad_lineal = (msg.linear.x)
+                        velocidad_angular = (msg.angular.z)
+                    #  print("angular : " + str(velocidad_angular))
+                #        vel_lineal = 0
+                  #      vel_angular = 0
+
+                        
+                        pygame.display.update()  # ACTUALIZAR
+                        posicion_y_boton_imagen = 10 # POSICIÓN Y DEL BOTON DENTRO DE LA PANTALLA
+                        parametro_boton, Boton_guardar_imagen = boton(pantalla, posicion_y_boton_imagen, "Guardar imagenn") # CREAR EL BOTÓN "GUARDAR"
+                        posicion_y_boton_recorrido = 45 # POSICIÓN Y DEL BOTON DENTRO DE LA PANTALLA
+                        parametro_boton, Boton_guardar_recorrido = boton(pantalla, posicion_y_boton_recorrido, "Guardar recorrido") # CREAR EL BOTÓN "GUARDAR"
+                        for i in pygame.event.get(): # ENTRAR A LA FUNCIÓN EVENTO
+                            evento(i, Boton_guardar_imagen, funcion_asiganada = lambda:GuardarImagen()) # SI SE OPRIME EL BOTÓN "GUARDAR" CORRER LA FUNCIÓN "GUARDAR ARCHIVO"
+                            evento(i, Boton_guardar_recorrido, funcion_asiganada = lambda:GuardarRecorrido()) 
+                            pygame.display.update() # ACTUALIZAR
 
                     
                 
