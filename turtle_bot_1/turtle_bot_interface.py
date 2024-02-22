@@ -155,11 +155,13 @@ def servicio_player(request, response):
     if request.data:
         response.success = True
         response.message = "ya te lo mando"
-        print("response: " + str(response))
-        print("request: " + str(request))
+        print("Servidor response: " + str(response))
+        print("Servidor request: " + str(request))
     else:
         response.success = False
-        response.message = "no"
+        response.message = "no puedo"
+        print("Servidor response: " + str(response))
+        print("Servidor request: " + str(request))
     return response
 
 global aqui

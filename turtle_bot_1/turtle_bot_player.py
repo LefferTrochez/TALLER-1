@@ -10,23 +10,28 @@ class TurtleBotPlayerNode(Node):
 	def __init__(self):
 		super().__init__("turtle_bot_player")
 		self.publisher_ = self.create_publisher(Twist, "turtlebot_cmdVel",10)
-		self.timer_ =self.create_timer(1/2, self.recorrido)
+		self.timer_ = self.create_timer(1/2, self.recorrido)
+		self.cliente = self.create_client(SetBool, 'recorrido_guardado')
 	
 	def recorrido(self):
-		msg = Twist()
+		if not self.cliente.wait_for_service(timeout_sec=1.0):
+			self.get_logger().warn('Servicio...')
+			return
+
 		request = SetBool.Request()
-		response = SetBool.Response()
-		Cliente = self.create_client(SetBool, 'recorrido_guardado')
 		request.data = True
-		response
-		print("request : " + str(request.data))
-		future = Cliente.call_async(request)
-		response = future.result()
-		print("response : " + str(response))
-
+		future = self.cliente.call_async(request)
+		future.add_done_callback(self.respuesta_servicio)
 		
+	def respuesta_servicio(self, future):
+			try:
+				response = future.result()
+				self.get_logger().info('Respuesta del servidor: ' + str(response))
+			except Exception as e:
+				self.get_logger().error('Servicio fallido ' + str(e,))
 
-
+	def funcion(self):
+		msg = Twist()	
 		archivo_ruta = os.path.join(os.path.expanduser("~"), "recorrido.txt")
 		try:
 			with open(archivo_ruta, 'r') as archivo:
@@ -45,17 +50,6 @@ class TurtleBotPlayerNode(Node):
 
 		except FileNotFoundError:
 			print(f"El archivo {archivo_ruta} no fue encontrado.")
-
-
-	#	response = future.result()
-		#print("cliente creado")
-	#	print(response)
-		#return response
-
-
-
-
-
 
 def main(args=None):
 	rclpy.init(args=args)
