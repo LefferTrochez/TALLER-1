@@ -154,9 +154,19 @@ def GuardarRecorrido(): # FUNCIÓN PARA GUARDAR LA IMAGEN DEL RECORRIDO
 def servicio_player(request, response):
     if request.data:
         response.success = True
-        response.message = "ya te lo mando"
+        file_options = {
+    'title': 'Seleccionar un archivo',
+    'filetypes': [('Todos los archivos', '.*')],
+    'initialdir': '~/Downloads',  # Directorio inicial, ajusta esto según tu sistema
+}
+        archivo = filedialog.askopenfilename(**file_options)
+        nombre_archivo = os.path.basename(archivo)
+        response.message = str(nombre_archivo)
+
         print("Servidor response: " + str(response))
         print("Servidor request: " + str(request))
+
+        #print("el archivo es: " + str(nombre_archivo))
     else:
         response.success = False
         response.message = "no puedo"
@@ -167,7 +177,7 @@ def servicio_player(request, response):
 global aqui
 aqui = True
 def RecorridoTxt (msg):
-    
+   # msg = Twist()
     global aqui
     pantalla.fill((255, 255, 255))
     if aqui:
@@ -184,10 +194,12 @@ def RecorridoTxt (msg):
 
 
 def main(args=None): # FUNCIÓN PRINCIAL
+   # msg = Twist()
     rclpy.init(args=args) # PARA INICIALIZAR EL CÓDIGO EN PYTHON
     TurtleBotInterfaceNode = rclpy.create_node('turtle_bot_interface') # CREACIÓN DEL NODO
     Servicio = TurtleBotInterfaceNode.create_service(SetBool, 'recorrido_guardado', servicio_player)
     print("el servicio ha sido creado")
+    
 
 
 
