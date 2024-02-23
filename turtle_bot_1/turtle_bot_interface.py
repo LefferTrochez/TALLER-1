@@ -146,6 +146,7 @@ def callback(msg): # FUNCIÓN PARA GRAFICAR EN TIEMPO REALuuuuuuu
 
 def EscribirArchivoTexto (vel_lineal , vel_angular, nombre_txt):
     with open(nombre_txt, 'a') as archivo:
+        time.sleep(0.5)
         archivo.write(str(vel_lineal) + " , " + str(vel_angular) +'\n')
 
 demas = 0
@@ -192,57 +193,53 @@ def GuardarRecorrido(): # FUNCIÓN PARA GUARDAR LA IMAGEN DEL RECORRIDO
 cuatro = 0
 def servicio_player(request, response):
         print("soy servicio player")
-        var = inicio_cuatro(cuatro)
-        print("var es: " +  str(var))
-        if var == 1:
-            print("entro a servicio player")
-            if request.data:
-                response.success = True
-                file_options = {
-            'title': 'Seleccionar un archivo',
-            'filetypes': [('Todos los archivos', '.*')],
-            'initialdir': '~/Downloads',  # Directorio inicial, ajusta esto según tu sistema
-        }
-                archivo = filedialog.askopenfilename(**file_options)
-                nombre_archivo = os.path.basename(archivo)
-                response.message = str(nombre_archivo)
+        pantalla.fill((255, 255, 255))
+        RecorridoTxt(msg = Twist())
+        TurtleBotInterfaceNode = rclpy.create_node('turtle_bot_interface')
+        TurtleBotInterfaceNode.create_timer(1, servicio_player)
 
-                print("Servidor response: " + str(response))
-                print("Servidor request: " + str(request))
-                RecorridoTxt(msg=Twist())
+        print("entro a servicio player")
+        if request.data:
+            response.success = True
+            file_options = {
+        'title': 'Seleccionar un archivo',
+        'filetypes': [('Todos los archivos', '.*')],
+        'initialdir': '~/Downloads',  # Directorio inicial, ajusta esto según tu sistema
+    }
+            archivo = filedialog.askopenfilename(**file_options)
+            nombre_archivo = os.path.basename(archivo)
+            response.message = str(nombre_archivo)
 
-                #print("el archivo es: " + str(nombre_archivo))
-            else:
-                response.success = False
-                response.message = "no puedo"
-                print("Servidor response: " + str(response))
-                print("Servidor request: " + str(request))
-            return response
+            print("Servidor response: " + str(response))
+            print("Servidor request: " + str(request))
+            RecorridoTxt(msg=Twist())
 
-global aqui
-aqui = True
-otro = 0
+            #print("el archivo es: " + str(nombre_archivo))
+        else:
+            response.success = False
+            response.message = "no puedo"
+            print("Servidor response: " + str(response))
+            print("Servidor request: " + str(request))
+        return response
+
+
 def RecorridoTxt (msg):
-    print("soy REcorridoTxt")
-    var = inicio_otro(otro)
-    print("var es: " +  str(var))
-    if var == 1:
+
         TurtleBotInterfaceNode = rclpy.create_node('turtle_bot_interface') 
+        TurtleBotInterfaceNode.create_timer(1, RecorridoTxt)
         TurtleBotInterfaceNode.create_subscription(Twist, '/turtlebot_position', RecorridoTxt, 10) # CREACIÓN DEL SUSCRIBER
         print("entro a REcorridoTxt")
-        global aqui
-        pantalla.fill((255, 255, 255))
-        if aqui:
-            pygame.display.update() #
-            pos_x = 0
-            pos_y = 0
-            if len(str(msg.linear.x)) > 5:
-                pos_x = (msg.linear.x)*500
-            if len(str(msg.linear.y)) > 5:
-                pos_y = (msg.linear.y)*500
-            print(pos_x)
-            print(pos_y)
+
+        pygame.display.update() #
+        pos_x = (msg.linear.x)*100
+        pos_y = (msg.linear.y)*100
+        print("posicion x: " + str(pos_x))
+        print("posicion y: " + str(pos_y))
+        if len(str(pos_x)) > 6 and len(str(pos_y)) > 6:
+            print("posicion x: " + str(pos_x))
+            print("posicion y: " + str(pos_y))
             pygame.draw.circle(pantalla, robot, (pos_x+pantalla.get_width()/2, -pos_y+pantalla.get_height()/2), 4) # DIBUJA EL CIRCULO EN LA PANTALLA EN LA COORDENADA DADA
+            pygame.display.update() #
 
 
 def inicio_cuatro(cuatro):
@@ -266,7 +263,6 @@ def inicio_otro(otro):
     pantalla.fill((255, 255, 255))
     pygame.display.update() # ACTUALIZAR
     return otro
-
 
 def main(args=None): # FUNCIÓN PRINCIAL
    # msg = Twist()
