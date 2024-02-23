@@ -146,8 +146,7 @@ def callback(msg): # FUNCIÓN PARA GRAFICAR EN TIEMPO REALuuuuuuu
 
 def EscribirArchivoTexto (vel_lineal , vel_angular, nombre_txt):
     with open(nombre_txt, 'a') as archivo:
-        time.sleep(0.5)
-        archivo.write(str(vel_lineal) + " , " + str(vel_angular) +'\n')
+            archivo.write(str(vel_lineal) + " , " + str(vel_angular) +'\n')
 
 demas = 0
 def SiQuiero():
@@ -196,7 +195,7 @@ def servicio_player(request, response):
         pantalla.fill((255, 255, 255))
         RecorridoTxt(msg = Twist())
         TurtleBotInterfaceNode = rclpy.create_node('turtle_bot_interface')
-        TurtleBotInterfaceNode.create_timer(1, servicio_player)
+        TurtleBotInterfaceNode.create_timer(0.2, servicio_player)
 
         print("entro a servicio player")
         if request.data:
@@ -226,7 +225,7 @@ def servicio_player(request, response):
 def RecorridoTxt (msg):
 
         TurtleBotInterfaceNode = rclpy.create_node('turtle_bot_interface') 
-        TurtleBotInterfaceNode.create_timer(1, RecorridoTxt)
+        TurtleBotInterfaceNode.create_timer(0.2, RecorridoTxt)
         TurtleBotInterfaceNode.create_subscription(Twist, '/turtlebot_position', RecorridoTxt, 10) # CREACIÓN DEL SUSCRIBER
         print("entro a REcorridoTxt")
 

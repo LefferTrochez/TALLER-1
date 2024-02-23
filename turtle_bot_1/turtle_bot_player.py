@@ -10,7 +10,7 @@ class TurtleBotPlayerNode(Node):
 	def __init__(self):
 		super().__init__("turtle_bot_player")
 		self.publisher_ = self.create_publisher(Twist, "turtlebot_cmdVel",10)
-		self.timer_ = self.create_timer(1, self.recorrido)
+		self.timer_ = self.create_timer(0.2, self.recorrido)
 		#self.timer1_ = self.create_timer(10, self.funcion)
 		self.cliente = self.create_client(SetBool, 'recorrido_guardado')
 	
@@ -43,13 +43,21 @@ class TurtleBotPlayerNode(Node):
 					#while str(archivo_nombre) == "reco.txt":
 					for i in datos[0:]:
 						i = i.split(",")
-						msg.linear.x = float(i[0])*10
-						self.get_logger().info("lin: " + str(msg.linear.x))
-						msg.angular.z = float(i[1])*10
-						self.get_logger().info("vel: " + str(msg.angular.z))
-						self.publisher_.publish(msg)
-						self.get_logger().info("valor i : " + str(i))
-						time.sleep(1)
+						x = float(i[0])
+						z = float(i[1])
+						if str(x) == "0.0" and str(z) == "0.0" :
+							None
+						else:
+							msg.linear.x = float (float(i[0] ) / 0.5)
+							self.get_logger().info("lin: " + str(msg.linear.x))
+							msg.angular.z = float (float(i[1] ) / 0.72)
+							self.get_logger().info("vel: " + str(msg.angular.z))
+							self.publisher_.publish(msg)
+							msg.angular.z = float (0)
+							msg.linear.x = float (0)
+							self.publisher_.publish(msg)
+							
+							time.sleep(0.2)
 					#msg.linear.x = float(123)
 					#msg.angular.z = float(123)
 
