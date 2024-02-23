@@ -26,6 +26,7 @@ global demas
 global resp_demas
 global otro
 global velocidad_lineal, velocidad_angular
+global recorrid
 
 def evento(i, forma_boton, funcion_asiganada = None): # FUNCIÓN PARA DETECTAR EL MOUSE
     if i.type == pygame.MOUSEBUTTONDOWN and i.button == 1: # DETECCIÓN DEL MOUSE
@@ -189,10 +190,13 @@ def GuardarRecorrido(): # FUNCIÓN PARA GUARDAR LA IMAGEN DEL RECORRIDO
                 ConNombre.write(SinNombre.read()) # ESCRIBIR EN EL ARCHIVO EL CONTENIDO DE LA IMAGEN "SINNOMBRE"
                 ConNombre.close()
 
-cuatro = 0
+
+cuatro = True
 def servicio_player(request, response):
+ 
         print("soy servicio player")
-        pantalla.fill((255, 255, 255))
+
+        inicio_cuatro(cuatro)
         RecorridoTxt(msg = Twist())
         TurtleBotInterfaceNode = rclpy.create_node('turtle_bot_interface')
         TurtleBotInterfaceNode.create_timer(0.2, servicio_player)
@@ -222,19 +226,18 @@ def servicio_player(request, response):
         return response
 
 
-def RecorridoTxt (msg):
-
+def RecorridoTxt (msg=Twist()):
         TurtleBotInterfaceNode = rclpy.create_node('turtle_bot_interface') 
         TurtleBotInterfaceNode.create_timer(0.2, RecorridoTxt)
-        TurtleBotInterfaceNode.create_subscription(Twist, '/turtlebot_position', RecorridoTxt, 10) # CREACIÓN DEL SUSCRIBER
-        print("entro a REcorridoTxt")
-
-        pygame.display.update() #
-        pos_x = (msg.linear.x)*100
-        pos_y = (msg.linear.y)*100
-        print("posicion x: " + str(pos_x))
-        print("posicion y: " + str(pos_y))
-        if len(str(pos_x)) > 6 and len(str(pos_y)) > 6:
+      #  TurtleBotInterfaceNode.create_subscription(Twist, '/turtlebot_position', RecorridoTxt, 10) # CREACIÓN DEL SUSCRIBER
+        if cuatro:
+            print("entro a recorrdio txt")
+            pos_x = (msg.linear.x)*100
+            pos_y = (msg.linear.y)*100
+            print("posicion x: " + str(pos_x))
+            print("posicion y: " + str(pos_y))
+        #    if len(str(pos_x)) > 6 and len(str(pos_y)) > 6:
+            print("entro if recorrido")
             print("posicion x: " + str(pos_x))
             print("posicion y: " + str(pos_y))
             pygame.draw.circle(pantalla, robot, (pos_x+pantalla.get_width()/2, -pos_y+pantalla.get_height()/2), 4) # DIBUJA EL CIRCULO EN LA PANTALLA EN LA COORDENADA DADA
@@ -243,10 +246,9 @@ def RecorridoTxt (msg):
 
 def inicio_cuatro(cuatro):
     print("entro al inicio cuatro")
-    cuatro = 1
+    cuatro = True
     pantalla.fill((255, 255, 255))
     pygame.display.update() # ACTUALIZAR
-    
     return cuatro
 
 def inicio_demas(demas):
@@ -271,7 +273,7 @@ def main(args=None): # FUNCIÓN PRINCIAL
     subscriber_position = TurtleBotInterfaceNode.create_subscription(Twist, '/turtlebot_position', callback, 10) # CREACIÓN DEL SUSCRIBER
     subscriber_velocidad = TurtleBotInterfaceNode.create_subscription(Twist, '/turtlebot_cmdVel', callback, 10) # CREACIÓN DEL SUSCRIBER
     callback(msg = Twist())
- #   subscriber_recorrido_pos = TurtleBotInterfaceNode.create_subscription(Twist, '/turtlebot_position', RecorridoTxt, 10) # CREACIÓN DEL SUSCRIBER
+    subscriber_recorrido_pos = TurtleBotInterfaceNode.create_subscription(Twist, '/turtlebot_position', RecorridoTxt, 10) # CREACIÓN DEL SUSCRIBER
     rclpy.spin(TurtleBotInterfaceNode) # PARA NO DEJAR MORIR LA COMUNICACIÓN
     rclpy.shutdown() # PARA APAGAR LA COMUNICACIÓN
 

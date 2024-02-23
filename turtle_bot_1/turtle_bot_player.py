@@ -58,19 +58,12 @@ class TurtleBotPlayerNode(Node):
 							self.publisher_.publish(msg)
 							
 							time.sleep(0.2)
-					#msg.linear.x = float(123)
-					#msg.angular.z = float(123)
 
-					#self.publisher_.publish(msg)
-						
-					#time.sleep(2)
 			except FileNotFoundError:
 				print(f"El archivo {archivo_ruta} no fue encontrado.")
 
-
 		except Exception as e:
 			self.get_logger().error('Servicio fallido ' + str(e,))
-
 
 
 def main(args=None):
