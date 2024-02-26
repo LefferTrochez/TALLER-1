@@ -48,16 +48,12 @@ class TurtleBotPlayerNode(Node):
 						if str(x) == "0.0" and str(z) == "0.0" :
 							None
 						else:
-							msg.linear.x = float (float(i[0] ) / 0.5)
+							msg.linear.x = float(i[0])
 							self.get_logger().info("lin: " + str(msg.linear.x))
-							msg.angular.z = float (float(i[1] ) / 0.72)
+							msg.angular.z = float(i[1])
 							self.get_logger().info("vel: " + str(msg.angular.z))
 							self.publisher_.publish(msg)
-							msg.angular.z = float (0)
-							msg.linear.x = float (0)
-							self.publisher_.publish(msg)
-							
-							time.sleep(0.2)
+
 
 			except FileNotFoundError:
 				print(f"El archivo {archivo_ruta} no fue encontrado.")

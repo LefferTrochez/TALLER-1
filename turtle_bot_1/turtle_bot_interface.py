@@ -15,6 +15,8 @@ global vel_lineal
 global vel_angular
 global x
 global y
+global xx
+global yy
 global lista_lineal
 global lista_angular
 global pos_x
@@ -67,7 +69,23 @@ primero = True
 def callback(msg): # FUNCIÓN PARA GRAFICAR EN TIEMPO REALuuuuuuu
     if inicio:
         print("entro a inicio para hacer 4")
-        RecorridoTxt(msg = Twist())
+       # TurtleBotInterfaceNode = rclpy.create_node('turtle_bot_interface')
+       # TurtleBotInterfaceNode.create_subscription(Twist, '/turtlebot_position', RecorridoTxt, 10) 
+        xx = (msg.linear.x)*100
+        yy = (msg.linear.y)*100
+        if len(str(xx)) > 6 and len(str(yy)) > 6:
+            pygame.draw.circle(pantalla, robot, (xx+pantalla.get_width()/2, -yy+pantalla.get_height()/2), 4) # DIBUJA EL CIRCULO EN LA PANTALLA EN LA COORDENADA DADA
+            titulo = pygame.font.SysFont("Arial", 26) # TIPO DE FUENTE DEL TÍTULO Y TAMAÑO DE LA LETRA
+            texto_titulo = titulo.render("Este fue el recorrido TurtleBot", True, (0, 0, 0)) # TÍTULO DE LA  GRÁFICA
+            posicion_x_titulo = 20 # POSICIÓN X DEL TÍTULO DENTRO DE LA PANTALLA
+            posicion_y_titulo = 25 # POSICIÓN Y DEL TÍTULO DENTRO DE LA PANTALLA
+            pantalla.blit(texto_titulo, (posicion_x_titulo, posicion_y_titulo)) # PONER EL TEXTO DEL TÍTULO EN LA PANTALLA
+            pygame.display.update()  # ACTUALIZAR
+            posicion_y_boton_imagen = 10 # POSICIÓN Y DEL BOTON DENTRO DE LA PANTALLA
+            parametro_boton, Boton_guardar_imagen = boton(pantalla, posicion_y_boton_imagen, "Guardar imagen") # CREAR EL BOTÓN "GUARDAR"
+            for i in pygame.event.get(): # ENTRAR A LA FUNCIÓN EVENTO
+                evento(i, Boton_guardar_imagen, funcion_asiganada = lambda:GuardarImagen()) # SI SE OPRIME EL BOTÓN "GUARDAR" CORRER LA FUNCIÓN "GUARDAR ARCHIVO"
+                pygame.display.update() # ACTUALIZAR
 
     else:
         if primero:
@@ -101,8 +119,8 @@ def callback(msg): # FUNCIÓN PARA GRAFICAR EN TIEMPO REALuuuuuuu
                         vel_lineal = velocidad_lineal
                     if len(str(velocidad_angular)) < 7:
                         vel_angular = velocidad_angular
-                    print("veloc lineal: " + str(vel_lineal))
-                    print("veloc angular: " + str(vel_angular))
+               #     print("veloc lineal: " + str(vel_lineal))
+               #     print("veloc angular: " + str(vel_angular))
                     EscribirArchivoTexto(vel_lineal, vel_angular, "SinNombre.txt")
                     
                     if len(str(x)) > 6 and len(str(y)) > 6:
@@ -160,13 +178,13 @@ def EscribirArchivoTexto (vel_lineal , vel_angular, nombre_txt):
 demas = 0
 def SiQuiero():
     
-    print("entro a SiQuiero")
+   # print("entro a SiQuiero")
     global escribir, primero
     escribir = True
     pantalla.fill((255, 255, 255))
     pygame.display.update() # ACTUALIZAR
     resp_demas = inicio_demas(demas)
-    print("demas es: " + str(resp_demas))
+   # print("demas es: " + str(resp_demas))
     primero = False
 
   #  return primero
@@ -207,7 +225,7 @@ nombre_archivo = "no.txt"
 def servicio_player(request, response):
         global inicio
         #pygame.display.update() #
-        print("soy servicio player")
+      #  print("soy servicio player")
 
        # inicio_cuatro()
         inicio = True
@@ -216,7 +234,7 @@ def servicio_player(request, response):
         TurtleBotInterfaceNode = rclpy.create_node('turtle_bot_interface')
         TurtleBotInterfaceNode.create_timer(0.2, servicio_player)
 
-        print("entro a servicio player")
+      #  print("entro a servicio player")
         if request.data:
             response.success = True
             global nombre_archivo
@@ -230,55 +248,28 @@ def servicio_player(request, response):
                 nombre_archivo = os.path.basename(archivo)
                 response.message = str(nombre_archivo)
 
-                print("Servidor response: " + str(response))
-                print("Servidor request: " + str(request))
+             #   print("Servidor response: " + str(response))
+              #  print("Servidor request: " + str(request))
                 pantalla.fill((255, 255, 255))
                 pygame.display.update() #
                # RecorridoTxt(msg=Twist())
             # PreguntarUnaSolaVez2(otro1)
-                print("entre a diferente de reco")
+              #  print("entre a diferente de reco")
 
 
             #print("el archivo es: " + str(nombre_archivo))
         else:
             response.success = False
             response.message = "no puedo"
-            print("Servidor response: " + str(response))
-            print("Servidor request: " + str(request))
+           # print("Servidor response: " + str(response))
+           # print("Servidor request: " + str(request))
         return response
 
 
-def RecorridoTxt (msg=Twist()):
-        TurtleBotInterfaceNode = rclpy.create_node('turtle_bot_interface')
-        TurtleBotInterfaceNode.create_subscription(Twist, '/turtlebot_position', RecorridoTxt, 10) 
-        TurtleBotInterfaceNode.create_timer(0.2, RecorridoTxt)
-      #  TurtleBotInterfaceNode.create_subscription(Twist, '/turtlebot_position', RecorridoTxt, 10) # CREACIÓN DEL SUSCRIBER
-      #  if cuatro:
-        print("entro a recorrdio txt")
-        pos_x = (msg.linear.x)*100
-        pos_y = (msg.linear.y)*100
-        print("posicion x: " + str(pos_x))
-        print("posicion y: " + str(pos_y))
-    #    if len(str(pos_x)) > 6 and len(str(pos_y)) > 6:
-        print("entro if recorrido")
-        print("posicion x: " + str(pos_x))
-        print("posicion y: " + str(pos_y))
-        pygame.draw.circle(pantalla, robot, (pos_x+pantalla.get_width()/2, -pos_y+pantalla.get_height()/2), 4) # DIBUJA EL CIRCULO EN LA PANTALLA EN LA COORDENADA DADA
-        titulo = pygame.font.SysFont("Arial", 26) # TIPO DE FUENTE DEL TÍTULO Y TAMAÑO DE LA LETRA
-        texto_titulo = titulo.render("Gráfica de Posición TurtleBot", True, (0, 0, 0)) # TÍTULO DE LA  GRÁFICA
-        posicion_x_titulo = 20 # POSICIÓN X DEL TÍTULO DENTRO DE LA PANTALLA
-        posicion_y_titulo = 25 # POSICIÓN Y DEL TÍTULO DENTRO DE LA PANTALLA
-        pantalla.blit(texto_titulo, (posicion_x_titulo, posicion_y_titulo)) # PONER EL TEXTO DEL TÍTULO EN LA PANTALLA
-        pygame.display.update()  # ACTUALIZAR
-        posicion_y_boton_imagen = 10 # POSICIÓN Y DEL BOTON DENTRO DE LA PANTALLA
-        parametro_boton, Boton_guardar_imagen = boton(pantalla, posicion_y_boton_imagen, "Guardar imagen") # CREAR EL BOTÓN "GUARDAR"
-        for i in pygame.event.get(): # ENTRAR A LA FUNCIÓN EVENTO
-            evento(i, Boton_guardar_imagen, funcion_asiganada = lambda:GuardarImagen()) # SI SE OPRIME EL BOTÓN "GUARDAR" CORRER LA FUNCIÓN "GUARDAR ARCHIVO"
-            pygame.display.update() # ACTUALIZAR
 
 
 def inicio_cuatro():
-    print("entro al inicio cuatro")
+   # print("entro al inicio cuatro")
     inicio = True
     pantalla.fill((255, 255, 255))
     pygame.display.update() # ACTUALIZAR
@@ -294,13 +285,13 @@ def inicio_demas(demas):
 
 def PreguntarUnaSolaVez1(otro1):
     #global otro1
-    print("entro a preguntar 1")
+   # print("entro a preguntar 1")
     otro1 = True
     return otro1
 
 def PreguntarUnaSolaVez2(otro1):
     #global otro1
-    print("entro a preguntar 2")
+   # print("entro a preguntar 2")
     otro1 = False
     #return otro1
 

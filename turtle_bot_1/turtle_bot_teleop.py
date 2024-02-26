@@ -3,9 +3,7 @@ import rclpy # LIBRERIA PARA UTILIZAR PYTHON (ROS CLIENT LIBRARY PYTHON)
 from sshkeyboard import listen_keyboard # PARA MONITOREAR EL TECLADO
 from geometry_msgs.msg import Twist # ES EL TIPO DE MENSAJE 
 
-rclpy.init() # INICILIZACIÓN DEL CÓDIGO
 TurtleBotTeleopNode = rclpy.create_node("turtle_bot_teleop") # CREACIÓN DEL NODO
-Publish = TurtleBotTeleopNode.create_publisher(Twist, "turtlebot_cmdVel", 10) # CREACIÓN DEL PUBLISHER
 linear_in = float(input("What is the Linear Velocity?: ")) # PEDIR VELOCIDAD LINEAL AL USUARIO
 angular_in = float(input("What is the Angular Velocity?: ")) # PEDIR VELOCIDAD ANGULAR AL USUARIO
 TurtleBotTeleopNode.get_logger().info('\n' '\n' "Now, to move the robot you have to press: " '\n' "w | a | s | d") # IMPRIMIR INSTRUCCIONES
@@ -43,6 +41,14 @@ def ReleaseCase(key):
     msg.linear.x = linear_out # OBTENER VELOCIDAD LINEAL
     msg.angular.z = angular_out # OBTENER VELOCIDAD ANGULAR
     Publish.publish(msg) # PUBLICAR VELOCIDADES
+
+rclpy.init() # INICILIZACIÓN DEL CÓDIGO
+TurtleBotTeleopNode = rclpy.create_node("turtle_bot_teleop") # CREACIÓN DEL NODO
+Publish = TurtleBotTeleopNode.create_publisher(Twist, "turtlebot_cmdVel", 10) # CREACIÓN DEL PUBLISHER
+TurtleBotTeleopNode.create_timer(0.2, PressCase)
+TurtleBotTeleopNode.create_timer(0.2, ReleaseCase)
+
+
 
 def main(args=None): # FUNCIÓN PRINCIAL
     listen_keyboard(on_press=PressCase, on_release=ReleaseCase,) # COMANDO PARA MONITOREAR EL TECLADO
