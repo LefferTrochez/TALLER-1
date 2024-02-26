@@ -67,6 +67,8 @@ def boton_decision(pantalla, posicion_x_boton, texto, function = None): # FUNCIÃ
 
 primero = True
 def callback(msg): # FUNCIÃ“N PARA GRAFICAR EN TIEMPO REALuuuuuuu
+    TurtleBotInterfaceNode = rclpy.create_node('turtle_bot_interface')
+    TurtleBotInterfaceNode.create_timer(0.2, callback)
     if inicio:
         print("entro a inicio para hacer 4")
        # TurtleBotInterfaceNode = rclpy.create_node('turtle_bot_interface')
