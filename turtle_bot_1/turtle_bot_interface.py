@@ -29,6 +29,7 @@ global resp_demas
 global otro1
 global otro2
 global velocidad_lineal, velocidad_angular
+global velocidad_linea, velocidad_angula
 global recorrid
 global nombre_archivo
 global inicio
@@ -68,13 +69,27 @@ def boton_decision(pantalla, posicion_x_boton, texto, function = None): # FUNCI�
 primero = True
 def callback(msg): # FUNCIÓN PARA GRAFICAR EN TIEMPO REALuuuuuuu
     TurtleBotInterfaceNode = rclpy.create_node('turtle_bot_interface')
-    TurtleBotInterfaceNode.create_timer(0.2, callback)
+    TurtleBotInterfaceNode.create_timer(5, callback)
     if inicio:
-        print("entro a inicio para hacer 4")
-       # TurtleBotInterfaceNode = rclpy.create_node('turtle_bot_interface')
-       # TurtleBotInterfaceNode.create_subscription(Twist, '/turtlebot_position', RecorridoTxt, 10) 
+        global velocidad_angula, velocidad_linea
         xx = (msg.linear.x)*100
         yy = (msg.linear.y)*100
+
+
+        vel_linea = 0
+        vel_angula = 0
+        velocidad_linea = (msg.linear.x)
+        velocidad_angula = (msg.angular.z)
+        if len(str(velocidad_linea)) < 7:
+            vel_linea = velocidad_linea
+        if len(str(velocidad_angula)) < 7:
+            vel_angula = velocidad_angula
+        print("lin :" + str(vel_linea))
+        print("ang :" + str(vel_angula))
+
+
+
+
         if len(str(xx)) > 6 and len(str(yy)) > 6:
             pygame.draw.circle(pantalla, robot, (xx+pantalla.get_width()/2, -yy+pantalla.get_height()/2), 4) # DIBUJA EL CIRCULO EN LA PANTALLA EN LA COORDENADA DADA
             titulo = pygame.font.SysFont("Arial", 26) # TIPO DE FUENTE DEL TÍTULO Y TAMAÑO DE LA LETRA
@@ -116,19 +131,13 @@ def callback(msg): # FUNCIÓN PARA GRAFICAR EN TIEMPO REALuuuuuuu
                     vel_angular = 0
                     velocidad_lineal = (msg.linear.x)
                     velocidad_angular = (msg.angular.z)
-
                     if len(str(velocidad_lineal)) < 7:
                         vel_lineal = velocidad_lineal
                     if len(str(velocidad_angular)) < 7:
                         vel_angular = velocidad_angular
-               #     print("veloc lineal: " + str(vel_lineal))
-               #     print("veloc angular: " + str(vel_angular))
                     EscribirArchivoTexto(vel_lineal, vel_angular, "SinNombre.txt")
                     
                     if len(str(x)) > 6 and len(str(y)) > 6:
-
-                    # print("este es x: " + str(x))
-                    # print("este es y: " + str(y))
                         pygame.draw.circle(pantalla, robot, (x+pantalla.get_width()/2, -y+pantalla.get_height()/2), 4) # DIBUJA EL CIRCULO EN LA PANTALLA EN LA COORDENADA DADA
                         titulo = pygame.font.SysFont("Arial", 26) # TIPO DE FUENTE DEL TÍTULO Y TAMAÑO DE LA LETRA
                         texto_titulo = titulo.render("Gráfica de Posición TurtleBot", True, (0, 0, 0)) # TÍTULO DE LA  GRÁFICA
@@ -137,11 +146,6 @@ def callback(msg): # FUNCIÓN PARA GRAFICAR EN TIEMPO REALuuuuuuu
                         pantalla.blit(texto_titulo, (posicion_x_titulo, posicion_y_titulo)) # PONER EL TEXTO DEL TÍTULO EN LA PANTALLA
                         velocidad_lineal = (msg.linear.x)
                         velocidad_angular = (msg.angular.z)
-                    #  print("angular : " + str(velocidad_angular))
-                #        vel_lineal = 0
-                  #      vel_angular = 0
-
-                        
                         pygame.display.update()  # ACTUALIZAR
                         posicion_y_boton_imagen = 10 # POSICIÓN Y DEL BOTON DENTRO DE LA PANTALLA
                         parametro_boton, Boton_guardar_imagen = boton(pantalla, posicion_y_boton_imagen, "Guardar imagenn") # CREAR EL BOTÓN "GUARDAR"
@@ -151,13 +155,10 @@ def callback(msg): # FUNCIÓN PARA GRAFICAR EN TIEMPO REALuuuuuuu
                             evento(i, Boton_guardar_imagen, funcion_asiganada = lambda:GuardarImagen()) # SI SE OPRIME EL BOTÓN "GUARDAR" CORRER LA FUNCIÓN "GUARDAR ARCHIVO"
                             evento(i, Boton_guardar_recorrido, funcion_asiganada = lambda:GuardarRecorrido()) 
                             pygame.display.update() # ACTUALIZAR
-
-                    
-                
                 
                 else: 
-                    x = (msg.linear.x)*500 # COORDENADA DEL ROBOT EN X ESCALA POR 100
-                    y = (msg.linear.y)*500 # COORDENADA DEL ROBOT EN Y ESCALA POR 100
+                    x = (msg.linear.x)*100 # COORDENADA DEL ROBOT EN X ESCALA POR 100
+                    y = (msg.linear.y)*100 # COORDENADA DEL ROBOT EN Y ESCALA POR 100
                     pygame.draw.circle(pantalla, robot, (x+pantalla.get_width()/2, -y+pantalla.get_height()/2), 4) # DIBUJA EL CIRCULO EN LA PANTALLA EN LA COORDENADA DADA
                     titulo = pygame.font.SysFont("Arial", 26) # TIPO DE FUENTE DEL TÍTULO Y TAMAÑO DE LA LETRA
                     texto_titulo = titulo.render("Gráfica de Posición TurtleBot", True, (0, 0, 0)) # TÍTULO DE LA  GRÁFICA
@@ -171,25 +172,18 @@ def callback(msg): # FUNCIÓN PARA GRAFICAR EN TIEMPO REALuuuuuuu
                         evento(i, Boton_guardar_imagen, funcion_asiganada = lambda:GuardarImagen()) # SI SE OPRIME EL BOTÓN "GUARDAR" CORRER LA FUNCIÓN "GUARDAR ARCHIVO"
                         pygame.display.update() # ACTUALIZAR
 
-
-
 def EscribirArchivoTexto (vel_lineal , vel_angular, nombre_txt):
     with open(nombre_txt, 'a') as archivo:
             archivo.write(str(vel_lineal) + " , " + str(vel_angular) +'\n')
 
 demas = 0
 def SiQuiero():
-    
-   # print("entro a SiQuiero")
     global escribir, primero
     escribir = True
     pantalla.fill((255, 255, 255))
     pygame.display.update() # ACTUALIZAR
     resp_demas = inicio_demas(demas)
-   # print("demas es: " + str(resp_demas))
     primero = False
-
-  #  return primero
 
 def NoQuiero():
     global escribir, primero
@@ -219,24 +213,14 @@ def GuardarRecorrido(): # FUNCIÓN PARA GUARDAR LA IMAGEN DEL RECORRIDO
                 ConNombre.write(SinNombre.read()) # ESCRIBIR EN EL ARCHIVO EL CONTENIDO DE LA IMAGEN "SINNOMBRE"
                 ConNombre.close()
 
-
-#cuatro = True
 otro1 = True
 inicio = False
 nombre_archivo = "no.txt"
 def servicio_player(request, response):
         global inicio
-        #pygame.display.update() #
-      #  print("soy servicio player")
-
-       # inicio_cuatro()
         inicio = True
-       # PreguntarUnaSolaVez1(otro1)
-       # RecorridoTxt(msg = Twist())
         TurtleBotInterfaceNode = rclpy.create_node('turtle_bot_interface')
-        TurtleBotInterfaceNode.create_timer(0.2, servicio_player)
-
-      #  print("entro a servicio player")
+        TurtleBotInterfaceNode.create_timer(5, servicio_player)
         if request.data:
             response.success = True
             global nombre_archivo
@@ -249,33 +233,18 @@ def servicio_player(request, response):
                 archivo = filedialog.askopenfilename(**file_options)
                 nombre_archivo = os.path.basename(archivo)
                 response.message = str(nombre_archivo)
-
-             #   print("Servidor response: " + str(response))
-              #  print("Servidor request: " + str(request))
                 pantalla.fill((255, 255, 255))
                 pygame.display.update() #
-               # RecorridoTxt(msg=Twist())
-            # PreguntarUnaSolaVez2(otro1)
-              #  print("entre a diferente de reco")
 
-
-            #print("el archivo es: " + str(nombre_archivo))
         else:
             response.success = False
             response.message = "no puedo"
-           # print("Servidor response: " + str(response))
-           # print("Servidor request: " + str(request))
         return response
 
-
-
-
 def inicio_cuatro():
-   # print("entro al inicio cuatro")
     inicio = True
     pantalla.fill((255, 255, 255))
     pygame.display.update() # ACTUALIZAR
-    #return cuatro
 
 def inicio_demas(demas):
     demas = 1
@@ -284,28 +253,20 @@ def inicio_demas(demas):
     primero = False
     return demas
 
-
 def PreguntarUnaSolaVez1(otro1):
-    #global otro1
-   # print("entro a preguntar 1")
     otro1 = True
     return otro1
 
 def PreguntarUnaSolaVez2(otro1):
-    #global otro1
-   # print("entro a preguntar 2")
     otro1 = False
-    #return otro1
 
 def main(args=None): # FUNCIÓN PRINCIAL
-   # msg = Twist()
     rclpy.init(args=args) # PARA INICIALIZAR EL CÓDIGO EN PYTHON
     TurtleBotInterfaceNode = rclpy.create_node('turtle_bot_interface') # CREACIÓN DEL NODO
     Servicio = TurtleBotInterfaceNode.create_service(SetBool, 'recorrido_guardado', servicio_player)
     subscriber_position = TurtleBotInterfaceNode.create_subscription(Twist, '/turtlebot_position', callback, 10) # CREACIÓN DEL SUSCRIBER
     subscriber_velocidad = TurtleBotInterfaceNode.create_subscription(Twist, '/turtlebot_cmdVel', callback, 10) # CREACIÓN DEL SUSCRIBER
     callback(msg = Twist())
-   # subscriber_recorrido_pos =  # CREACIÓN DEL SUSCRIBER
     rclpy.spin(TurtleBotInterfaceNode) # PARA NO DEJAR MORIR LA COMUNICACIÓN
     rclpy.shutdown() # PARA APAGAR LA COMUNICACIÓN
 
