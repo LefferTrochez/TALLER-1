@@ -3,7 +3,16 @@ import rclpy
 from rclpy.node import Node
 from geometry_msgs.msg import Twist # ES EL TIPO DE MENSAJE 
 import os
+import time
 from example_interfaces.srv import SetBool
+
+global cont 
+global datos
+cont = 0
+global inicio
+inicio = True
+	#datos = []
+
 
 class TurtleBotPlayerNode(Node):
 	def __init__(self):
@@ -12,46 +21,64 @@ class TurtleBotPlayerNode(Node):
 		self.timer_ = self.create_timer(5, self.recorrido)
 		self.cliente = self.create_client(SetBool, 'recorrido_guardado')
 	
+	
 	def recorrido(self):
-		if not self.cliente.wait_for_service(timeout_sec=1.0):
-			self.get_logger().warn('Servicio...')
-			return
+		global inicio
+		if inicio:
+			print("entro inicio if recorrido")
+			if not self.cliente.wait_for_service(timeout_sec=1.0):
+				self.get_logger().warn('Servicio...')
+				return
+			request = SetBool.Request()
+			request.data = True
+			future = self.cliente.call_async(request)
+			future.add_done_callback(self.funcion)
+		else:
+			print("entro inicio else recorrido")
+			self.funcion
+	
 
-		request = SetBool.Request()
-		request.data = True
-		future = self.cliente.call_async(request)
-		future.add_done_callback(self.funcion)
-		
+	
 	def funcion(self, future):
-		try:
-			response = future.result()
-			self.get_logger().info('Respuesta del servidor: ' + str(response))
-			msg = Twist()	
-			archivo_nombre = str(response.message)
-			self.get_logger().info("ARCHIVO: " + str(archivo_nombre))
-			descargas_dir = os.path.join(os.path.expanduser("~"), "Downloads")
-			archivo_ruta = os.path.join(descargas_dir, archivo_nombre)
+		global cont
+		global inicio
+		if inicio:
+			print("entro inicio if funcion")
 			try:
-				with open(archivo_ruta, 'r') as archivo:
-					self.get_logger().info("entre a leer el archivo")
-					datos = [line.strip() for line in archivo.readlines()]
-					for i in datos[0:]:
-						i = i.split(",")
-						x = float(i[0])
-						z = float(i[1])
-						if str(x) == "0.0" and str(z) == "0.0" :
-							None
-						else:
-							msg.linear.x = float(i[0])
-							self.get_logger().info("lin: " + str(msg.linear.x))
-							msg.angular.z = float(i[1])
-							self.get_logger().info("ang: " + str(msg.angular.z))
-							self.publisher_.publish(msg)
+				response = future.result()
+				#self.get_logger().info('Respuesta del servidor: ' + str(response))
+				msg = Twist()	
+				archivo_nombre = str(response.message)
+				#self.get_logger().info("ARCHIVO: " + str(archivo_nombre))
+				descargas_dir = os.path.join(os.path.expanduser("~"), "Downloads")
+				archivo_ruta = os.path.join(descargas_dir, archivo_nombre)
+				try:
+					with open(archivo_ruta, 'r') as archivo:
+						datos = [line.strip() for line in archivo.readlines()]
+						inicio = False
 
-			except FileNotFoundError:
-				print(f"El archivo {archivo_ruta} no fue encontrado.")
-		except Exception as e:
-			self.get_logger().error('Servicio fallido ' + str(e,))
+				except FileNotFoundError:
+					print(f"El archivo {archivo_ruta} no fue encontrado.")
+			except Exception as e:
+				self.get_logger().error('Servicio fallido ' + str(e,))
+
+
+		else:
+			print("entro inicio else funcion")
+			#datos1 = datos.copy()
+			
+			if datos:
+						x = (datos[cont])
+						valor = x.split(',')
+						msg.linear.x = float(valor[0])
+						self.get_logger().info("lineal: " + str(msg.linear.x))
+						msg.angular.z = float(valor[1])
+						self.get_logger().info("angular: " + str(msg.angular.z))
+						self.publisher_.publish(msg)
+						cont += 1
+						print(cont)
+			else:
+				print("paila")
 
 def main(args=None):
 	rclpy.init(args=args)
