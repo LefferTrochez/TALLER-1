@@ -38,8 +38,8 @@ def ReleaseCase(key):
 rclpy.init() # INICILIZACIÓN DEL CÓDIGO
 TurtleBotTeleopNode = rclpy.create_node("turtle_bot_teleop") # CREACIÓN DEL NODO
 Publish = TurtleBotTeleopNode.create_publisher(Twist, "turtlebot_cmdVel", 10) # CREACIÓN DEL PUBLISHER
-TurtleBotTeleopNode.create_timer(5, PressCase)
-TurtleBotTeleopNode.create_timer(5, ReleaseCase)
+TurtleBotTeleopNode.create_timer(1.85, PressCase)
+TurtleBotTeleopNode.create_timer(1.85, ReleaseCase)
 linear_in = float(input("What is the Linear Velocity?: ")) # PEDIR VELOCIDAD LINEAL AL USUARIO
 angular_in = float(input("What is the Angular Velocity?: ")) # PEDIR VELOCIDAD ANGULAR AL USUARIO
 TurtleBotTeleopNode.get_logger().info('\n' '\n' "Now, to move the robot you have to press: " '\n' "w | a | s | d") # IMPRIMIR INSTRUCCIONES

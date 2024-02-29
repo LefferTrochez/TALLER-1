@@ -9,7 +9,11 @@ class TurtleBotPlayerNode(Node):
 	def __init__(self):
 		super().__init__("turtle_bot_player")
 		self.publisher_ = self.create_publisher(Twist, "turtlebot_cmdVel",10)
+<<<<<<< Updated upstream
 		self.timer_ = self.create_timer(5, self.recorrido)
+=======
+		self.timer_ = self.create_timer(1.85, self.recorrido)
+>>>>>>> Stashed changes
 		self.cliente = self.create_client(SetBool, 'recorrido_guardado')
 	
 	def recorrido(self):

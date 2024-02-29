@@ -69,13 +69,20 @@ def boton_decision(pantalla, posicion_x_boton, texto, function = None): # FUNCIÃ
 primero = True
 def callback(msg): # FUNCIÃ“N PARA GRAFICAR EN TIEMPO REALuuuuuuu
     TurtleBotInterfaceNode = rclpy.create_node('turtle_bot_interface')
+<<<<<<< Updated upstream
     TurtleBotInterfaceNode.create_timer(5, callback)
+=======
+    TurtleBotInterfaceNode.create_timer(1.85, callback)
+>>>>>>> Stashed changes
     if inicio:
         global velocidad_angula, velocidad_linea
         xx = (msg.linear.x)*100
         yy = (msg.linear.y)*100
+<<<<<<< Updated upstream
 
 
+=======
+>>>>>>> Stashed changes
         vel_linea = 0
         vel_angula = 0
         velocidad_linea = (msg.linear.x)
@@ -220,11 +227,15 @@ def servicio_player(request, response):
         global inicio
         inicio = True
         TurtleBotInterfaceNode = rclpy.create_node('turtle_bot_interface')
+<<<<<<< Updated upstream
         TurtleBotInterfaceNode.create_timer(5, servicio_player)
+=======
+        TurtleBotInterfaceNode.create_timer(1.85, servicio_player)
+>>>>>>> Stashed changes
         if request.data:
             response.success = True
             global nombre_archivo
-            if nombre_archivo != "reco.txt":
+            if nombre_archivo != "final.txt":
                 file_options = {
                 'title': 'Seleccionar un archivo',
                 'filetypes': [('Todos los archivos', '.*')],
