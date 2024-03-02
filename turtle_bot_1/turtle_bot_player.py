@@ -17,7 +17,7 @@ class TurtleBotPlayerNode(Node):
 	def __init__(self):
 		super().__init__("turtle_bot_player") # CREACIÓN DEL NODO
 		self.publisher_ = self.create_publisher(Twist, "turtlebot_cmdVel",10) # CREACIÓN DEL SUBSCRIBER AL TOPICO DE VELOCIDAD
-		self.timer_ = self.create_timer(1.1, self.recorrido) # TIEMPO DE MUESTREO
+		self.timer_ = self.create_timer(0.75, self.recorrido) # TIEMPO DE MUESTREO
 		self.cliente = self.create_client(SetBool, 'recorrido_guardado') # CREACIÓN DEL SERVICIO - CLIENTE
 	
 	def recorrido(self): # FUNCIÓN PARA INICIAR EL SERVICIO

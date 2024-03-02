@@ -22,6 +22,8 @@ global velocidad_lineal, velocidad_angular
 global nombre_archivo
 global inicio
 
+last_written_velocity = (0, 0) 
+
 def evento(i, forma_boton, funcion_asiganada = None): # FUNCIÓN PARA DETECTAR EL MOUSE
     if i.type == pygame.MOUSEBUTTONDOWN and i.button == 1: # DETECCIÓN DEL MOUSE
         if forma_boton.collidepoint(i.pos): # HABILITAR EL BOTÓN
@@ -57,7 +59,7 @@ def boton_decision(pantalla, posicion_x_boton, texto, function = None): # FUNCI�
 primero = True
 def callback(msg): # FUNCIÓN PARA GRAFICAR EN TIEMPO REALuuuuuuu
     TurtleBotInterfaceNode = rclpy.create_node('turtle_bot_interface') # CREACION DEL NODO
-    #TurtleBotInterfaceNode.create_timer(0.5, callback) # TIEMPO DE MUESTREO
+    TurtleBotInterfaceNode.create_timer(0.75, callback) # TIEMPO DE MUESTREO
     if inicio: # SI EXISTE UN SERVICIO
         xx = (msg.linear.x)*100
         yy = (msg.linear.y)*100
@@ -103,6 +105,7 @@ def callback(msg): # FUNCIÓN PARA GRAFICAR EN TIEMPO REALuuuuuuu
                         vel_lineal = velocidad_lineal
                     if len(str(velocidad_angular)) < 7: # CLASIFICA VALORES DE VELOCIDAD ANGULAR 
                         vel_angular = velocidad_angular
+                       
                     EscribirArchivoTexto(vel_lineal, vel_angular, "SinNombre.txt")
                     if len(str(x)) > 6 and len(str(y)) > 6: # CLASIFICA VALOR DE POSICION PARA GRAFICAR
                         pygame.draw.circle(pantalla, robot, (x+pantalla.get_width()/2, -y+pantalla.get_height()/2), 4) # DIBUJA EL CIRCULO EN LA PANTALLA EN LA COORDENADA DADA
@@ -139,9 +142,15 @@ def callback(msg): # FUNCIÓN PARA GRAFICAR EN TIEMPO REALuuuuuuu
                             evento(i, Boton_guardar_imagen, funcion_asiganada = lambda:GuardarImagen()) # SI SE OPRIME EL BOTÓN "GUARDAR" CORRER LA FUNCIÓN "GUARDAR ARCHIVO"
                             pygame.display.update() # ACTUALIZAR
 
-def EscribirArchivoTexto (vel_lineal , vel_angular, nombre_txt):
-    with open(nombre_txt, 'a') as archivo: # ABRE EL ARCHIVO
-            archivo.write(str(vel_lineal) + " , " + str(vel_angular) +'\n') # ESCRIBE EN EL ARCHIVO
+
+def EscribirArchivoTexto(vel_lineal, vel_angular, nombre_txt):
+    if vel_lineal != 0.0 or vel_angular!= 0.0:
+        with open(nombre_txt, 'a') as archivo:
+            archivo.write(f"{vel_lineal}, {vel_angular}\n")
+            print(vel_lineal,vel_angular)
+            
+      
+            
 
 def SiQuiero(): # FUNCION SI SE QUIERE GUARDAR EL RECORRIDO
     global escribir, primero
@@ -169,6 +178,8 @@ def GuardarImagen(): # FUNCIÓN PARA GUARDAR LA IMAGEN DEL RECORRIDO
                 os.remove('SinNombre.png') # ELIMINA LA IMAGEN "SINNOMBRE" Y DEJA LA IMAGEN ARCHIVO 
 
 def GuardarRecorrido(): # FUNCIÓN PARA GUARDAR LA IMAGEN DEL RECORRIDO
+    with open("SinNombre.txt", 'a') as archivo:
+            archivo.write(f"{0}, {0}\n")
     archivo = filedialog.asksaveasfilename(defaultextension='.txt') # PREGUNTAR AL USUARIO POR EL NOMBRE DE LA GRÁFICA
     Nombre_predetermiando = "SinNombre.txt"
     if archivo: # ENTRA AL ARCHIVO 
@@ -183,7 +194,7 @@ def servicio_player(request, response): # FUNCION SI HAY UN SERVICIO
         global inicio
         inicio = True
         TurtleBotInterfaceNode = rclpy.create_node('turtle_bot_interface')
-        TurtleBotInterfaceNode.create_timer(0.9, servicio_player) # TIEMPO DE MUESTREO
+        TurtleBotInterfaceNode.create_timer(0.75, servicio_player) # TIEMPO DE MUESTREO
         if request.data: # SI HAY UN SERVICIO
             response.success = True # COMUNICACIÓN BOOLEANA DEL SERVICIO
             global nombre_archivo
